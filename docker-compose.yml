@@ -18,13 +18,13 @@ services:
       SENTRY_MEMCACHED_HOST: memcached
       SENTRY_REDIS_HOST: redis
       SENTRY_POSTGRES_HOST: postgres
-      SENTRY_EMAIL_HOST: smtp
+#      SENTRY_EMAIL_HOST: smtp
     volumes:
       - ./data/sentry:/var/lib/sentry/files
 
-  smtp:
-    restart: unless-stopped
-    image: tianon/exim4
+#  smtp:
+#    restart: unless-stopped
+#    image: tianon/exim4
 
   memcached:
     restart: unless-stopped
@@ -47,7 +47,7 @@ services:
       - redis
       - postgres
       - memcached
-      - smtp
+#      - smtp
     ports:
       - '9000:9000'
 
@@ -59,7 +59,7 @@ services:
       - redis
       - postgres
       - memcached
-      - smtp
+#      - smtp
 
   worker:
     restart: unless-stopped
@@ -69,4 +69,13 @@ services:
       - redis
       - postgres
       - memcached
-      - smtp
+#      - smtp
+
+  logstash:
+    build:
+      context: logstash/
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
